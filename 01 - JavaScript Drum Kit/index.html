@@ -59,32 +59,35 @@
 
 <script>
   const audios = Array.from(document.querySelectorAll('audio'));
-  const keys = Array.from(document.querySelectorAll('.key'));
+  const keysArray = Array.from(document.querySelectorAll('.key'));
+  const keys = document.querySelector('.keys')
 
-  function playSound(e) {
-    const audio = audios.find(elem => elem.dataset.key == e.keyCode);
+  function playSound(event) {
+    const audio = audios.find(elem => elem.dataset.key == event.keyCode);
     if (!audio) return;
     audio.currentTime = 0;
     audio.play();
-    addAndRemoveTransition(e);
+    switchTransition(event);
   }
 
-  function addAndRemoveTransition(e) {
-    const key = keys.find(key => key.dataset.key == e.keyCode);
+  function switchTransition(event) {
+    keysArray.forEach(key => key.classList.remove('playing'));
+    const key = keysArray.find(key => key.dataset.key == event.keyCode);
     key.classList.add('playing');
     key.addEventListener('transitionend', evt => {
       if (evt.propertyName !== 'transform') return;
       key.classList.remove('playing')
-    })
-    
+    }) 
   }
 
   document.addEventListener('keydown', playSound);
 
-  keys.forEach(elem => elem.addEventListener('click', () => {
-    const e = {keyCode: elem.dataset.key};
-    playSound(e)
-  }))
+  keys.addEventListener('mousedown', (event) => {
+    const clickedKey = event.target.closest('.key');
+    if (!clickedKey) return;
+    const code = {keyCode: clickedKey.dataset.key};
+    playSound(code)
+  })
 </script>
 
 
